@@ -25,19 +25,45 @@ module.exports = function makeDataHelpers(db) {
         }
         callback(null, tweets);
       });
+    },
+
+    // Update the database
+    putLike: function(uid, callback) {
+
+      let currentUser = "Romain";
+
+      // Get the tweet we want to update likes with his UID
+      db.collection("tweets").find( { tweetID : uid } ).toArray((err, tweets) => {
+          if(err){
+            return console.log("error in db find");
+          }
+
+          // We store our updated value
+          let currentText = tweets[0].content.text;
+          let currentLikes = tweets[0].content.likes;
+
+          currentLikes.push(currentUser);
+
+          // We push our value in the database, text has to be set again or will be erased
+          db.collection("tweets").update(
+          { tweetID : uid },
+            { $set:
+              {
+                content:
+                  {
+                    text: currentText,
+                    likes: currentLikes
+                  }
+              }
+            }
+          );
+       });
     }
 
 
 
-  };
-}
+  } // return
+} // export
 
 
 
-    // // Get all tweets in `db`, sorted by newest first
-    // getTweets: function(callback) {
-    //   simulateDelay(() => {
-    //     const sortNewestFirst = (a, b) => a.created_at - b.created_at;
-    //     callback(null, db.tweets.sort(sortNewestFirst));
-    //   });
-    // }

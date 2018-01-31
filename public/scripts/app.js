@@ -9,7 +9,7 @@ $( document ).ready(function() {
 
   // Fake data taken from tweets.json
   const data = [
-  //   {
+  //   abcdefg: {
   //     "user": {
   //       "name": "Newton",
   //       "avatars": {
@@ -24,7 +24,7 @@ $( document ).ready(function() {
   //     },
   //     "created_at": 1461116232227
   //   },
-  //   {
+  //   bcdefgh: {
   //     "user": {
   //       "name": "Descartes",
   //       "avatars": {
@@ -50,47 +50,55 @@ $( document ).ready(function() {
   //     },
   //     "content": {
   //       "text": "Es ist nichts schrecklicher als eine tätige Unwissenheit."
+
   //     },
   //     "created_at": 1461113796368
   //   }
   ];
 
+  // XSS prevention => escaping
   function escape(str) {
     var div = document.createElement('div');
     div.appendChild(document.createTextNode(str));
     return div.innerHTML;
   }
 
-
+  // Create our html code for new tweets
   function createTweetElement(tweet) {
 
     let fullName = tweet.user.name;
     let avatarUrl = tweet.user.avatars.small;
     let atName = tweet.user.handle;
     let tweetContent = tweet.content.text;
+    let tweetID = tweet.tweetID;
+    let likeArray = tweet.content.likes;
 
     // let utcSeconds = tweet.created_at;
     let timeStamp = Date(tweet.created_at).toString();
 
 
-    let $tweet = $('<div id="tweet-container"><div class="header"><header><img alt="vanil12" src="' + avatarUrl + '"><span class="full-name"> ' + fullName + ' </span><span class="at-name"> ' + atName + ' </span></header></div><article><p> ' + escape(tweetContent) + ' </p></article><footer><span> ' + timeStamp + ' </span><div class="icons"><i class="fa fa-flag mini-icons" aria-hidden="true"></i><i class="fa fa-retweet mini-icons" aria-hidden="true"></i><i class="fa fa-heart mini-icons" aria-hidden="true"></i></div></footer></div>');
+    let $tweet = $('<div id="tweet-container"><div class="header"><header><img alt="vanil12" src="' + avatarUrl + '"><span class="full-name"> ' + fullName + ' </span><span class="at-name"> ' + atName + ' </span></header></div><article><p> ' + escape(tweetContent) + ' </p></article><footer><span> ' + timeStamp + ' </span><div class="icons"><i class="fa fa-flag mini-icons" aria-hidden="true"></i><i class="fa fa-retweet mini-icons" aria-hidden="true"></i><form class="likes-form" action="/tweets/likes" method="POST" data-tweet-uid="' + tweetID + '"><button type="submit"><i class="fa fa-heart mini-icons"></i></button></form><span>' + likeArray.length + '</span></div></footer></div>');
 
+    console.log("This is the tweet UID: " + tweetID);
     return $tweet;
-
   }
 
 
+  // Render the html tweet sent by the createTweetElement()
   function renderTweets(tweets) {
     // loops through tweets
+    $('#display-tweets').remove();
     for(tweet in tweets){
       // calls createTweetElement for each tweet
       let fullTweet = createTweetElement(tweets[tweet]);
 
       // takes return value and appends it to the tweets container
+      $('.tweet-section').append('<section id="display-tweets"></section>')
       $('#display-tweets').prepend(fullTweet);
     }
   }
 
+  // Get the tweets from the DB and render them
   function loadTweets($myTweet){
     $.ajax({
       url: '/tweets',
@@ -101,15 +109,17 @@ $( document ).ready(function() {
     });
   }
 
-  renderTweets(data);
+  // renderTweets(data);
 
-  $( "form" ).on('submit', function( event ) {
+  // The tweet submit form
+  $( ".new-tweet form" ).on('submit', function( event ) {
 
     $('.flash').remove();
 
     let string = $("textarea").val();
     string = string.replace(/\s+/g, '');
 
+    // Empty tweet and too long tweet error handlers
     if (string.length <= 0){
        $('.new-tweet').append("<p class='flash'> Alert, message cannot be empty !!!</p>");
        event.preventDefault();
@@ -122,6 +132,7 @@ $( document ).ready(function() {
      return;
     }
 
+    // jquery ajax new tweet POST
     $.ajax({
       url: '/tweets',
       method: 'POST',
@@ -131,22 +142,46 @@ $( document ).ready(function() {
       // },
       success: function () {
         loadTweets();
+        $('textarea').val('');
+        // $('.counter').val('140');
       }
     });
 
     event.preventDefault();
   });
 
-  $( "#nav-bar button").on('click', function(){
+  // nav bar compose button toggle effect
+  $("#nav-bar button").on('click', function(){
     $(".new-tweet").slideToggle();
     if ($(".new-tweet").is(':visible'))
     {
         $("textarea").focus();
     }
-// slideup slidedown
   });
 
 
+// My Like button on submit {
+  $(".tweet-section").on('submit', '.likes-form', function(event){
 
+    let dataValue = ($(this).attr("data-tweet-uid"));
+    console.log("My Data in submit event: " + dataValue);
+
+
+    $.ajax({
+      url: '/tweets/likes',
+      method: 'POST',
+      data: {data: dataValue},
+      error: function() {
+        console.log("NOOOOPE ERROR");
+      },
+      success: function () {
+        console.log("/likes success");
+      }
+    });
+    event.preventDefault();
+  });
+
+
+loadTweets();
 
 }); // Document ready end

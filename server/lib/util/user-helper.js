@@ -5,6 +5,7 @@ const chance = new Chance();
 
 const md5 = require('md5');
 
+
 module.exports = {
 
   generateRandomUser: () => {
@@ -12,6 +13,7 @@ module.exports = {
     const firstName = chance.first({gender: gender});
     const lastName  = chance.last();
     const userName  = firstName + " " + lastName;
+
 
     let userHandle = "@";
     if (Math.random() > 0.5) {
