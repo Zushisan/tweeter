@@ -22,7 +22,7 @@
   line-height: 80px; font-size: 200%;
 }
 
-#nav-bar button {
+#nav-bar .compose {
   float: right;
   color: #00a087;
   background-color: #eee;
@@ -34,5 +34,19 @@
   margin-top: 10px;
 }
 
+#nav-bar .users {
+  color: #00a087;
+  background-color: #eee;
+  border: 1px solid #900;
+  border-radius: 5px;
+  height: 40px;
+  width: 75px;
+  margin-top: 20px;
+  margin-left: 20px;
+}
+
+
 #nav-bar button:hover { color: black; }
 #nav-bar button:hover { background-color: white; }
+
+

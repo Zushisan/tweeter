@@ -7,54 +7,8 @@
 // A $( document ).ready() block.
 $( document ).ready(function() {
 
-  // Fake data taken from tweets.json
-  const data = [
-  //   abcdefg: {
-  //     "user": {
-  //       "name": "Newton",
-  //       "avatars": {
-  //         "small":   "https://vanillicon.com/788e533873e80d2002fa14e1412b4188_50.png",
-  //         "regular": "https://vanillicon.com/788e533873e80d2002fa14e1412b4188.png",
-  //         "large":   "https://vanillicon.com/788e533873e80d2002fa14e1412b4188_200.png"
-  //       },
-  //       "handle": "@SirIsaac"
-  //     },
-  //     "content": {
-  //       "text": "If I have seen further it is by standing on the shoulders of giants"
-  //     },
-  //     "created_at": 1461116232227
-  //   },
-  //   bcdefgh: {
-  //     "user": {
-  //       "name": "Descartes",
-  //       "avatars": {
-  //         "small":   "https://vanillicon.com/7b89b0d8280b93e2ba68841436c0bebc_50.png",
-  //         "regular": "https://vanillicon.com/7b89b0d8280b93e2ba68841436c0bebc.png",
-  //         "large":   "https://vanillicon.com/7b89b0d8280b93e2ba68841436c0bebc_200.png"
-  //       },
-  //       "handle": "@rd" },
-  //     "content": {
-  //       "text": "Je pense , donc je suis"
-  //     },
-  //     "created_at": 1461113959088
-  //   },
-  //   {
-  //     "user": {
-  //       "name": "Johann von Goethe",
-  //       "avatars": {
-  //         "small":   "https://vanillicon.com/d55cf8e18b47d4baaf60c006a0de39e1_50.png",
-  //         "regular": "https://vanillicon.com/d55cf8e18b47d4baaf60c006a0de39e1.png",
-  //         "large":   "https://vanillicon.com/d55cf8e18b47d4baaf60c006a0de39e1_200.png"
-  //       },
-  //       "handle": "@johann49"
-  //     },
-  //     "content": {
-  //       "text": "Es ist nichts schrecklicher als eine tätige Unwissenheit."
-
-  //     },
-  //     "created_at": 1461113796368
-  //   }
-  ];
+  let currentUser = {
+  }
 
   // XSS prevention => escaping
   function escape(str) {
@@ -79,7 +33,7 @@ $( document ).ready(function() {
 
     let $tweet = $('<div id="tweet-container"><div class="header"><header><img alt="vanil12" src="' + avatarUrl + '"><span class="full-name"> ' + fullName + ' </span><span class="at-name"> ' + atName + ' </span></header></div><article><p> ' + escape(tweetContent) + ' </p></article><footer><span> ' + timeStamp + ' </span><div class="icons"><i class="fa fa-flag mini-icons" aria-hidden="true"></i><i class="fa fa-retweet mini-icons" aria-hidden="true"></i><form class="likes-form" action="/tweets/likes" method="POST" data-tweet-uid="' + tweetID + '"><button type="submit"><i class="fa fa-heart mini-icons"></i></button></form><span>' + likeArray.length + '</span></div></footer></div>');
 
-    console.log("This is the tweet UID: " + tweetID);
+
     return $tweet;
   }
 
@@ -107,9 +61,32 @@ $( document ).ready(function() {
         renderTweets($myTweet);
       }
     });
+
   }
 
-  // renderTweets(data);
+
+  function checkCookies(){
+
+    // We check our cookies on page load
+    $.ajax({
+      url: '/login',
+      method: 'GET',
+      success: function (res) {
+
+        if(res){
+          $(".user-logged").remove();
+          $(".tweet-section").prepend('<p class="user-logged"> Logged in as: ' + res + '. </p>');
+
+        }
+        else if(res === false) {
+          $(".user-logged").remove();
+          $(".tweet-section").prepend('<p class="user-logged"> Please LOGIN to start TWEETIN. </p>');
+
+        }
+      }
+    });
+  }
+
 
   // The tweet submit form
   $( ".new-tweet form" ).on('submit', function( event ) {
@@ -132,14 +109,16 @@ $( document ).ready(function() {
      return;
     }
 
+
     // jquery ajax new tweet POST
     $.ajax({
       url: '/tweets',
       method: 'POST',
       data: $(this).serialize(),
-      // error: function() {
+      error: function() {
 
-      // },
+      $('.new-tweet').append("<p class='flash'> Alert, you must be logged in to tweet !!!</p>");
+      },
       success: function () {
         loadTweets();
         $('textarea').val('');
@@ -151,7 +130,7 @@ $( document ).ready(function() {
   });
 
   // nav bar compose button toggle effect
-  $("#nav-bar button").on('click', function(){
+  $("#nav-bar .compose").on('click', function(){
     $(".new-tweet").slideToggle();
     if ($(".new-tweet").is(':visible'))
     {
@@ -160,9 +139,10 @@ $( document ).ready(function() {
   });
 
 
-// My Like button on submit {
+// My Like button on submit
   $(".tweet-section").on('submit', '.likes-form', function(event){
 
+    let currentSection = $(this).parent().parent().parent();
     let dataValue = ($(this).attr("data-tweet-uid"));
     console.log("My Data in submit event: " + dataValue);
 
@@ -171,17 +151,126 @@ $( document ).ready(function() {
       url: '/tweets/likes',
       method: 'POST',
       data: {data: dataValue},
-      error: function() {
-        console.log("NOOOOPE ERROR");
+      error: function(res) {
+        $(".flash").remove();
+
+        currentSection.prepend('<p class="flash">' + res.responseText + '</p>');
       },
       success: function () {
-        console.log("/likes success");
+        $(".flash").remove();
+        console.log("like success");
+        loadTweets();
+
       }
     });
     event.preventDefault();
   });
 
 
+  $("#nav-bar button.register").one('click', function(){
+    $('.tweet-section').slideToggle();
+    $('<form action="/register" method="POST" class="register-form"><h3>Register</h3><p>e-mail: <input name="email" class="email"></p><p>password: <input name="password" class="password"></p><input type="submit" value="Create Account" class="users"></form>').appendTo('.container');
+
+    $("#nav-bar button.register").on('click', function(){
+        $('.register-form').slideToggle();
+        $('.tweet-section').slideToggle();
+    });
+  });
+
+
+  $(".container").on('submit', '.register-form', function(event){
+
+    $.ajax({
+      url: '/register',
+      method: 'POST',
+      data: $(this).serialize(),
+      error: function(res) {
+        $(".flash").remove();
+        $(".container").append('<p class="flash">' + res.responseText + '</p>');
+      },
+      success: function (res) {
+        $(".flash").remove();
+        $(".user-logged").remove();
+        $('.register-form').slideToggle();
+        $('.tweet-section').slideToggle();
+        $(".tweet-section").prepend('<p class="user-logged"> Logged in as ' + res.email + '. </p>');
+
+
+      }
+    });
+    event.preventDefault();
+  });
+
+
+
+  $("#nav-bar button.login").one('click', function(){
+    $('.tweet-section').slideToggle();
+    $('<form action="/login" method="POST" class="login-form"><h3>Login</h3><p>e-mail: <input name="email" class="email"></p><p>password: <input name="password" class="password"></p><input type="submit" value="Create Account" class="users"></form>').appendTo('.container');
+
+    $("#nav-bar button.login").on('click', function(){
+        $('.login-form').slideToggle();
+        $('.tweet-section').slideToggle();
+    });
+
+  });
+
+
+  $(".container").on('submit', '.login-form', function(event){
+
+    $.ajax({
+      url: '/login',
+      method: 'POST',
+      data: $(this).serialize(),
+      error: function(res) {
+        $(".flash").remove();
+
+        $(".container").append('<p class="flash">' + res.responseText + '</p>');
+      },
+      success: function (res) {
+        $(".flash").remove();
+        $(".user-logged").remove();
+        $('.login-form').slideToggle();
+        $('.tweet-section').slideToggle();
+        $(".tweet-section").prepend('<p class="user-logged"> Logged in as ' + res.email + '. </p>');
+
+
+      }
+    });
+    event.preventDefault();
+  });
+
+
+    $(".logout").on('click', function(event){
+
+      console.log("click logout");
+
+    $.ajax({
+      url: '/logout',
+      method: 'POST',
+      // data: $(this).serialize(),
+      error: function() {
+        $(".flash").remove();
+      },
+      success: function () {
+        $(".flash").remove();
+
+        checkCookies();
+
+      }
+    });
+    event.preventDefault();
+  });
+
 loadTweets();
+checkCookies();
 
 }); // Document ready end
+
+
+
+// user register, set cookie and data in DB
+// user login -> check db and return response in the ajax succes with res.body
+
+//cookie is gonna be set in the header of every http request going to the server and will be used to check users
+
+//my global var is gonna come in as an html element that only append itself if the user is logged in

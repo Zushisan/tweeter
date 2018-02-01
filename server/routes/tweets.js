@@ -39,7 +39,14 @@ module.exports = function(DataHelpers) {
       return;
     }
 
-    const user = req.body.user ? req.body.user : userHelper.generateRandomUser();
+    if(!req.session.user_id){
+      res.status(400).json({ error: 'invalid request: not logged in'});
+      return;
+    }
+
+
+
+    const user = req.body.user ? req.body.user : userHelper.generateRandomUser(req.session.user_id);
     const tweetID = generateRandomID();
 
     const tweet = {
@@ -64,11 +71,17 @@ module.exports = function(DataHelpers) {
   // Updates the database in putLike()
   tweetsRoutes.post("/likes", function(req, res) {
 
-    DataHelpers.putLike(req.body.data, (err) => {
+    if(!req.session.user_id){
+      res.status(400).json({ error: 'invalid request: You need to login to like !'});
+      return;
+    }
+
+    DataHelpers.putLike(req.body.data, req.session.user_id, (err) => {
       if (err) {
 
         res.status(500).json({ error: err.message });
       } else {
+        console.log("sending 201");
         res.status(201).send();
       }
     });

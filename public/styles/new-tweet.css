@@ -134,3 +134,7 @@ height 0*/
   color: red;
 }
 
+/*used for error message*/
+.flash {
+  color: red;
+}

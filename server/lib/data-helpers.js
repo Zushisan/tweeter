@@ -28,21 +28,44 @@ module.exports = function makeDataHelpers(db) {
     },
 
     // Update the database
-    putLike: function(uid, callback) {
+    putLike: function(uid, cookie, callback) {
 
-      let currentUser = "Romain";
+      let currentUser = cookie;
 
       // Get the tweet we want to update likes with his UID
       db.collection("tweets").find( { tweetID : uid } ).toArray((err, tweets) => {
           if(err){
-            return console.log("error in db find");
+            return console.log("Error in the db request");
+          }
+
+          // We run our checks here:
+            // Cannot like own tweets
+            // Liking a tweet multiple times add/remove name from the like array
+
+          if(tweets[0].user.name === currentUser){
+            console.log("Cant like your own tweeets!");
+            return;
+          }
+
+          let likeArray = tweets[0].content.likes
+          // if I find the name (currentUser), then i remove it
+          // if I dont find the name I push it in the array
+
+          let likingUser = likeArray.find(function(element) {
+            console.log(likeArray);
+            return element === currentUser;
+          });
+
+          if(likingUser){
+            console.log(likeArray);
+            likeArray = likeArray.filter(user => user !== currentUser);
+          }
+          else{
+            likeArray.push(currentUser);
           }
 
           // We store our updated value
           let currentText = tweets[0].content.text;
-          let currentLikes = tweets[0].content.likes;
-
-          currentLikes.push(currentUser);
 
           // We push our value in the database, text has to be set again or will be erased
           db.collection("tweets").update(
@@ -52,12 +75,15 @@ module.exports = function makeDataHelpers(db) {
                 content:
                   {
                     text: currentText,
-                    likes: currentLikes
+                    likes: likeArray
                   }
               }
             }
           );
        });
+      console.log("finished db use");
+      callback();
+      // return;
     }
 
 
