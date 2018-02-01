@@ -67,7 +67,6 @@ app.post('/register', (req, res) => {
 
     function registerUser(userID){
       usersDB.push(userID);
-      // console.log(usersDB);
       res.status(201).json(userID);
     }
 
@@ -97,7 +96,7 @@ app.post('/login', (req, res) => {
   let checkCredentials = usersDB.filter(email).filter(password);
 
   if(checkCredentials.length > 0){
-    req.session.user_id = req.body.email
+    req.session.user_id = req.body.email;
     res.status(201).json(req.body);
   }
   else{

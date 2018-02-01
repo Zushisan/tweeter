@@ -7,12 +7,9 @@
 // A $( document ).ready() block.
 $( document ).ready(function() {
 
-  let currentUser = {
-  }
-
   // XSS prevention => escaping
   function escape(str) {
-    var div = document.createElement('div');
+    let div = document.createElement('div');
     div.appendChild(document.createTextNode(str));
     return div.innerHTML;
   }
@@ -47,7 +44,7 @@ $( document ).ready(function() {
 
     timeStamp = `${timeStamp.d} days ${timeStamp.h} hours ${timeStamp.m} min ${timeStamp.s} sec ago.`
 
-
+    // Futur render
     let $tweet = $('<div id="tweet-container"><div class="header"><header><img alt="vanil12" src="' + avatarUrl + '"><span class="full-name"> ' + fullName + ' </span><span class="at-name"> ' + atName + ' </span></header></div><article><p> ' + escape(tweetContent) + ' </p></article><footer><span> ' + timeStamp + ' </span><div class="icons"><i class="fa fa-flag mini-icons" aria-hidden="true"></i><i class="fa fa-retweet mini-icons" aria-hidden="true"></i><form class="likes-form" action="/tweets/likes" method="POST" data-tweet-uid="' + tweetID + '"><button type="submit"><i class="fa fa-heart mini-icons"></i></button></form><span>' + likeArray.length + '</span></div></footer></div>');
 
 
@@ -93,12 +90,15 @@ $( document ).ready(function() {
         if(res){
           $(".user-logged").remove();
           $(".tweet-section").prepend('<p class="user-logged"> Logged in as: ' + res + '. </p>');
+          $(".logout").show();
+          $(".login").hide();
 
         }
         else if(res === false) {
           $(".user-logged").remove();
-          $(".tweet-section").prepend('<p class="user-logged"> Please LOGIN to start TWEETIN. </p>');
-
+          $(".tweet-section").prepend('<p class="user-logged"> Please LOGIN to start TWEETING. </p>');
+          $(".logout").hide();
+          $(".login").show();
         }
       }
     });
@@ -183,7 +183,7 @@ $( document ).ready(function() {
     event.preventDefault();
   });
 
-
+  // register form design
   $("#nav-bar button.register").one('click', function(){
     $('.tweet-section').slideToggle();
     $('<form action="/register" method="POST" class="register-form"><h3>Register</h3><p>e-mail: <input name="email" class="email"></p><p>password: <input name="password" class="password"></p><input type="submit" value="Create Account" class="users"></form>').appendTo('.container');
@@ -194,7 +194,7 @@ $( document ).ready(function() {
     });
   });
 
-
+  // register form submit
   $(".container").on('submit', '.register-form', function(event){
 
     $.ajax({
@@ -208,6 +208,8 @@ $( document ).ready(function() {
       success: function (res) {
         $(".flash").remove();
         $(".user-logged").remove();
+        $(".login").hide();
+        $(".logout").show();
         $('.register-form').slideToggle();
         $('.tweet-section').slideToggle();
         $(".tweet-section").prepend('<p class="user-logged"> Logged in as ' + res.email + '. </p>');
@@ -219,7 +221,7 @@ $( document ).ready(function() {
   });
 
 
-
+  // login form design
   $("#nav-bar button.login").one('click', function(){
     $('.tweet-section').slideToggle();
     $('<form action="/login" method="POST" class="login-form"><h3>Login</h3><p>e-mail: <input name="email" class="email"></p><p>password: <input name="password" class="password"></p><input type="submit" value="Create Account" class="users"></form>').appendTo('.container');
@@ -231,7 +233,7 @@ $( document ).ready(function() {
 
   });
 
-
+  // login form submit
   $(".container").on('submit', '.login-form', function(event){
 
     $.ajax({
@@ -246,21 +248,18 @@ $( document ).ready(function() {
       success: function (res) {
         $(".flash").remove();
         $(".user-logged").remove();
+        $(".logout").show();
+        $(".login").hide();
         $('.login-form').slideToggle();
         $('.tweet-section').slideToggle();
         $(".tweet-section").prepend('<p class="user-logged"> Logged in as ' + res.email + '. </p>');
-
-
       }
     });
     event.preventDefault();
   });
 
-
+    // log out handler
     $(".logout").on('click', function(event){
-
-      console.log("click logout");
-
     $.ajax({
       url: '/logout',
       method: 'POST',
@@ -270,7 +269,8 @@ $( document ).ready(function() {
       },
       success: function () {
         $(".flash").remove();
-
+        $(".logout").hide();
+        $(".login").show();
         checkCookies();
 
       }
@@ -278,6 +278,8 @@ $( document ).ready(function() {
     event.preventDefault();
   });
 
+
+// Initial call on load
 loadTweets();
 checkCookies();
 
@@ -285,9 +287,9 @@ checkCookies();
 
 
 
-// user register, set cookie and data in DB
-// user login -> check db and return response in the ajax succes with res.body
-
-//cookie is gonna be set in the header of every http request going to the server and will be used to check users
-
-//my global var is gonna come in as an html element that only append itself if the user is logged in
+// TODO:
+  // encrypt passwords
+  // move user base to mongodb instead of temporary db;
+  // fix some css
+  // fix register/login toggle mix
+  // responsive css
