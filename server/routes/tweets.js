@@ -76,11 +76,21 @@ module.exports = function(DataHelpers) {
       return;
     }
 
-    DataHelpers.putLike(req.body.data, req.session.user_id, (err) => {
+    DataHelpers.putLike(req.body.data, req.session.user_id, (err, msg) => {
       if (err) {
 
-        res.status(500).json({ error: err.message });
-      } else {
+        console.log(msg);
+        if (msg) {
+          console.log("cant send header ?");
+          res.status(404).json(msg);
+          console.log("cant send header 22222");
+        }
+        else {
+          res.status(500).json({ error: err.message });
+        }
+
+      }
+      else {
         console.log("sending 201");
         res.status(201).send();
       }

@@ -28,7 +28,24 @@ $( document ).ready(function() {
     let likeArray = tweet.content.likes;
 
     // let utcSeconds = tweet.created_at;
-    let timeStamp = Date(tweet.created_at).toString();
+    let timeStamp = Date.now() - tweet.created_at;
+
+    function convertMS(ms) {
+      var d, h, m, s;
+      s = Math.floor(ms / 1000);
+      m = Math.floor(s / 60);
+      s = s % 60;
+      h = Math.floor(m / 60);
+      m = m % 60;
+      d = Math.floor(h / 24);
+      h = h % 24;
+      return { d: d, h: h, m: m, s: s };
+    };
+
+    timeStamp = convertMS(timeStamp);
+
+
+    timeStamp = `${timeStamp.d} days ${timeStamp.h} hours ${timeStamp.m} min ${timeStamp.s} sec ago.`
 
 
     let $tweet = $('<div id="tweet-container"><div class="header"><header><img alt="vanil12" src="' + avatarUrl + '"><span class="full-name"> ' + fullName + ' </span><span class="at-name"> ' + atName + ' </span></header></div><article><p> ' + escape(tweetContent) + ' </p></article><footer><span> ' + timeStamp + ' </span><div class="icons"><i class="fa fa-flag mini-icons" aria-hidden="true"></i><i class="fa fa-retweet mini-icons" aria-hidden="true"></i><form class="likes-form" action="/tweets/likes" method="POST" data-tweet-uid="' + tweetID + '"><button type="submit"><i class="fa fa-heart mini-icons"></i></button></form><span>' + likeArray.length + '</span></div></footer></div>');

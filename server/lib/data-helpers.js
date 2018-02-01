@@ -41,49 +41,50 @@ module.exports = function makeDataHelpers(db) {
           // We run our checks here:
             // Cannot like own tweets
             // Liking a tweet multiple times add/remove name from the like array
-
+            console.log(tweets[0].user.name, " ", currentUser)
           if(tweets[0].user.name === currentUser){
-            console.log("Cant like your own tweeets!");
-            return;
+            callback(true, "You cannot like your own tweets !!");
           }
+          else {
 
-          let likeArray = tweets[0].content.likes
-          // if I find the name (currentUser), then i remove it
-          // if I dont find the name I push it in the array
 
-          let likingUser = likeArray.find(function(element) {
-            console.log(likeArray);
-            return element === currentUser;
-          });
+            let likeArray = tweets[0].content.likes
+            // if I find the name (currentUser), then i remove it
+            // if I dont find the name I push it in the array
 
-          if(likingUser){
-            console.log(likeArray);
-            likeArray = likeArray.filter(user => user !== currentUser);
-          }
-          else{
-            likeArray.push(currentUser);
-          }
+            let likingUser = likeArray.find(function(element) {
+              return element === currentUser;
+            });
 
-          // We store our updated value
-          let currentText = tweets[0].content.text;
-
-          // We push our value in the database, text has to be set again or will be erased
-          db.collection("tweets").update(
-          { tweetID : uid },
-            { $set:
-              {
-                content:
-                  {
-                    text: currentText,
-                    likes: likeArray
-                  }
-              }
+            if(likingUser){
+              console.log(likeArray);
+              likeArray = likeArray.filter(user => user !== currentUser);
             }
-          );
-       });
-      console.log("finished db use");
-      callback();
-      // return;
+            else{
+              likeArray.push(currentUser);
+            }
+
+            // We store our updated value
+            let currentText = tweets[0].content.text;
+
+            // We push our value in the database, text has to be set again or will be erased
+            db.collection("tweets").update(
+            { tweetID : uid },
+              { $set:
+                {
+                  content:
+                    {
+                      text: currentText,
+                      likes: likeArray
+                    }
+                }
+              }
+            );
+            callback();
+          }
+         });
+
+       // return;
     }
 
 
