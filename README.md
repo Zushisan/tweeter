@@ -28,4 +28,10 @@ The current version does not support persistent User as they are stored in memor
 You can Register as any user or use email: "User" password: "pass" as a testing user.
 
 
+## Screenshots
+
+!["Screenshot of Main page"](https://github.com/Zushisan/tweeter/blob/master/docs/tweeter-main-page.png?raw=true)
+
+!['Screenshot of Main page again"](https://github.com/Zushisan/tweeter/blob/master/docs/tweeter-main-page-2.png?raw=true)
+
 
