@@ -34,4 +34,8 @@ You will have to Register any account before using Tweeter.
 
 !['Screenshot of Main page again"](https://github.com/Zushisan/tweeter/blob/master/docs/tweeter-main-page-2.png?raw=true)
 
+## Known Bugs
 
+Expanding and Shrinking the window while registering / logging in / logging out will sometimes cause the Buttons to break their positions.
+
+Using the login and register button the first time the page is loaded can lead to a one time visual 'glitch' (both windows at the same time) if the user open both at once.
