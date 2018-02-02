@@ -162,7 +162,7 @@ $( document ).ready(function() {
 
     let currentSection = $(this).parent().parent().parent();
     let dataValue = ($(this).attr("data-tweet-uid"));
-
+    let thisForm = $(this);
 
     $.ajax({
       url: '/tweets/likes',
@@ -175,7 +175,6 @@ $( document ).ready(function() {
       },
       success: function () {
         $(".flash").remove();
-
         loadTweets();
 
       }
@@ -212,9 +211,7 @@ $( document ).ready(function() {
         $(".logout").show();
         $('.register-form').slideToggle();
         $('.tweet-section').slideToggle();
-        $(".tweet-section").prepend('<p class="user-logged"> Logged in as ' + res.email + '. </p>');
-
-
+        $(".tweet-section").prepend('<p class="user-logged"> Logged in as ' + res + '. </p>');
       }
     });
     event.preventDefault();
@@ -252,7 +249,7 @@ $( document ).ready(function() {
         $(".login").hide();
         $('.login-form').slideToggle();
         $('.tweet-section').slideToggle();
-        $(".tweet-section").prepend('<p class="user-logged"> Logged in as ' + res.email + '. </p>');
+        $(".tweet-section").prepend('<p class="user-logged"> Logged in as ' + res + '. </p>');
       }
     });
     event.preventDefault();
@@ -289,7 +286,6 @@ checkCookies();
 
 // TODO:
   // encrypt passwords
-  // move user base to mongodb instead of temporary db;
   // fix some css
   // fix register/login toggle mix
   // responsive css

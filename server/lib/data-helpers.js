@@ -13,7 +13,6 @@ module.exports = function makeDataHelpers(db) {
     saveTweet: function(newTweet, callback) {
       simulateDelay(() => {
         db.collection("tweets").insertOne(newTweet);
-        // db.tweets.insertOne(newTweet);
         callback(null, true);
       });
     },
@@ -35,7 +34,7 @@ module.exports = function makeDataHelpers(db) {
       // Get the tweet we want to update likes with his UID
       db.collection("tweets").find( { tweetID : uid } ).toArray((err, tweets) => {
           if(err){
-            return console.log("Error in the db request");
+            return console.log("Error in the db request to like a tweet.");
           }
 
           // We run our checks here:
@@ -80,11 +79,55 @@ module.exports = function makeDataHelpers(db) {
                 }
               }
             ); // end db update
-            callback();
+            callback(null);
           }
          }); // end db find()
 
-    } // putlike function
+    }, // putlike function
+
+    registerUser: function(userID, callback){
+      // Get the corresponding user if it exist return an error, if not we register
+      db.collection("users").find( { email : userID.email } ).toArray((err, users) => {
+        if(err){
+          return console.log("Error in the db request to register.");
+        }
+
+        // Checking users, could be === 1 but >= 1 seems to handle unexpected behavior better.
+        if(users.length >= 1){
+          callback(true, "User already exist !!");
+        }
+        else{
+          // userID.password = bcrypt.hashSync(userID.password, 10);
+          db.collection("users").insertOne(userID);
+          callback(null, null, userID);
+        }
+
+      });
+    }, // registerUser
+
+    userLogin: function(userID, bcrypt, callback){
+      db.collection("users").find( { email : userID.email })
+        .toArray((err, users) => {
+          if(err){
+            return console.log("Probably need to change this message in userLogin");
+          }
+
+          // Checking if a user exist, could be === 1
+          if(users.length >= 1){
+            if(bcrypt.compareSync(userID.password, users[0].password)){
+             callback(null, null, userID);
+            }
+            else{
+              callback(true, "Incorrect credentials, use Register to create an account.")
+            }
+          }
+          else{
+            callback(true, "Incorrect credentials, use Register to create an account.")
+          }
+        });
+      } // userLogin
+
+
 
   } // return
 } // export
