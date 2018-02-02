@@ -136,13 +136,13 @@ $( document ).ready(function() {
 
     // Empty tweet and too long tweet error handlers
     if (string.length <= 0){
-       $('.new-tweet').append("<p class='flash'> Alert, message cannot be empty !!!</p>");
+       $('.new-tweet').append("<p class='flash'> Message cannot be empty !!!</p>");
        event.preventDefault();
        return;
     }
 
     if (string.length > 140){
-     $('.new-tweet').append("<p class='flash'> Alert, message must be less or equal to 140 characters !!!</p>");
+     $('.new-tweet').append("<p class='flash'> Message must be less or equal to 140 characters !!!</p>");
      event.preventDefault();
      return;
     }
@@ -154,16 +154,21 @@ $( document ).ready(function() {
       method: 'POST',
       data: $(this).serialize(),
       error: function() {
-
-      $('.new-tweet').append("<p class='flash'> Alert, you must be logged in to tweet !!!</p>");
+        $(".flash").remove();
+        $('.new-tweet').append('<p class="flash">' + res.responseText + '</p>');
       },
-      success: function () {
-        loadLatestTweets();
-        $('textarea').val('');
-        // $('.counter').val('140');
+      success: function (res) {
+        if(res){
+          $(".flash").remove();
+          $('.new-tweet').append("<p class='flash'> Alert, you must be logged in to tweet !!!</p>");
+        }
+        else{
+          $(".flash").remove();
+          loadLatestTweets();
+          $('textarea').val('');
+        }
       }
     });
-
     event.preventDefault();
   });
 
@@ -190,10 +195,15 @@ $( document ).ready(function() {
         $(".flash").remove();
         currentSection.prepend('<p class="flash">' + res.responseText + '</p>');
       },
-      success: function () {
-        $(".flash").remove();
-        loadTweets();
-
+      success: function (res) {
+        if(res){
+          $(".flash").remove();
+          currentSection.prepend('<p class="flash">' + res + '</p>');
+        }
+        else {
+          $(".flash").remove();
+          loadTweets();
+        }
       }
     });
     event.preventDefault();
@@ -224,12 +234,17 @@ $( document ).ready(function() {
       },
       success: function (res) {
         $(".flash").remove();
-        $(".user-logged").remove();
-        $(".login").hide();
-        $(".logout").show();
-        $('.register-form').slideToggle();
-        $('.tweet-section').slideToggle();
-        $(".tweet-section").prepend('<p class="user-logged"> Logged in as ' + res + '. </p>');
+        if(res.email === undefined){
+          $(".container").append('<p class="flash">' + res + '</p>');
+        }
+        else {
+          $(".user-logged").remove();
+          $(".login").hide();
+          $(".logout").show();
+          $('.register-form').slideToggle();
+          $('.tweet-section').slideToggle();
+          $(".tweet-section").prepend('<p class="user-logged"> Logged in as ' + res.email + '. </p>');
+        }
       }
     });
     event.preventDefault();
@@ -258,17 +273,22 @@ $( document ).ready(function() {
       data: $(this).serialize(),
       error: function(res) {
         $(".flash").remove();
-
         $(".container").append('<p class="flash">' + res.responseText + '</p>');
       },
       success: function (res) {
         $(".flash").remove();
-        $(".user-logged").remove();
-        $(".logout").show();
-        $(".login").hide();
-        $('.login-form').slideToggle();
-        $('.tweet-section').slideToggle();
-        $(".tweet-section").prepend('<p class="user-logged"> Logged in as ' + res + '. </p>');
+
+        if(res.email === undefined){
+          $(".container").append('<p class="flash">' + res + '</p>');
+        }
+        else{
+          $(".user-logged").remove();
+          $(".logout").show();
+          $(".login").hide();
+          $('.login-form').slideToggle();
+          $('.tweet-section').slideToggle();
+          $(".tweet-section").prepend('<p class="user-logged"> Logged in as ' + res.email + '. </p>');
+        }
       }
     });
     event.preventDefault();

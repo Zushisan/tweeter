@@ -13,7 +13,7 @@ module.exports = function makeDataHelpers(db) {
     saveTweet: function(newTweet, callback) {
       simulateDelay(() => {
         db.collection("tweets").insertOne(newTweet);
-        callback(null, true);
+        callback(null);
       });
     },
 
@@ -34,7 +34,7 @@ module.exports = function makeDataHelpers(db) {
       // Get the tweet we want to update likes with his UID
       db.collection("tweets").find( { tweetID : uid } ).toArray((err, tweets) => {
           if(err){
-            return console.log("Error in the db request to like a tweet.");
+            return callback(err);
           }
 
           // We run our checks here:
@@ -42,7 +42,7 @@ module.exports = function makeDataHelpers(db) {
             // Liking a tweet multiple times add/remove name from the like array
 
           if(tweets[0].user.name === currentUser){
-            callback(true, "You cannot like your own tweets !!");
+            callback(null, "You cannot like your own tweets !!");
           }
           else {
 
@@ -89,12 +89,12 @@ module.exports = function makeDataHelpers(db) {
       // Get the corresponding user if it exist return an error, if not we register
       db.collection("users").find( { email : userID.email } ).toArray((err, users) => {
         if(err){
-          return console.log("Error in the db request to register.");
+          return callback(err);
         }
 
         // Checking users, could be === 1 but >= 1 seems to handle unexpected behavior better.
         if(users.length >= 1){
-          callback(true, "User already exist !!");
+          callback(null, "User already exist !!");
         }
         else{
           // userID.password = bcrypt.hashSync(userID.password, 10);
@@ -109,7 +109,7 @@ module.exports = function makeDataHelpers(db) {
       db.collection("users").find( { email : userID.email })
         .toArray((err, users) => {
           if(err){
-            return console.log("Probably need to change this message in userLogin");
+            return callback(err);
           }
 
           // Checking if a user exist, could be === 1
@@ -118,11 +118,11 @@ module.exports = function makeDataHelpers(db) {
              callback(null, null, userID);
             }
             else{
-              callback(true, "Incorrect credentials, use Register to create an account.")
+              callback(null, "Incorrect credentials, use Register to create an account.")
             }
           }
           else{
-            callback(true, "Incorrect credentials, use Register to create an account.")
+            callback(null, "Incorrect credentials, use Register to create an account.")
           }
         });
       } // userLogin

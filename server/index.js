@@ -24,6 +24,7 @@ app.use(cookieSession({
 MongoClient.connect(MONGODB_URI, (err, db) => {
   if (err) {
     console.error(`Failed to connect: ${MONGODB_URI}`);
+    console.log(err)
     throw err;
   }
 
@@ -51,22 +52,22 @@ MongoClient.connect(MONGODB_URI, (err, db) => {
   app.post('/register', (req, res) => {
 
     if(req.body.email === "" || req.body.password === ""){
-      res.status(400).json("Field cannot be blanks.")
+      res.status(200).json("Field cannot be blanks.")
     }
     else {
       req.body.password = bcrypt.hashSync(req.body.password, 10);
       DataHelpers.registerUser(req.body, (err, msg, user) => {
         if (err) {
+          res.status(500).json({ error: err.message });
+        }
+        else{
           if (msg) {
-            res.status(404).json(msg);
+            res.status(200).json(msg);
           }
           else {
-            res.status(500).json({ error: err.message });
+            req.session.user_id = user.email;
+            res.status(201).json(user);
           }
-        }
-        else {
-          req.session.user_id = user.email;
-          res.status(201).json(user.email);
         }
       });
     }
@@ -76,16 +77,16 @@ MongoClient.connect(MONGODB_URI, (err, db) => {
   app.post('/login', (req, res) => {
     DataHelpers.userLogin(req.body, bcrypt, (err, msg, user) => {
       if (err) {
-        if (msg) {
-          res.status(404).json(msg);
-        }
-        else {
           res.status(500).json({ error: err.message });
-        }
       }
       else {
-        req.session.user_id = user.email;
-        res.status(201).json(user.email);
+        if (msg) {
+          res.status(200).json(msg);
+        }
+        else {
+          req.session.user_id = user.email;
+          res.status(201).json(user);
+        }
       }
     });
   });

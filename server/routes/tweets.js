@@ -35,16 +35,14 @@ module.exports = function(DataHelpers) {
   tweetsRoutes.post("/", function(req, res) {
 
     if (!req.body.text) {
-      res.status(400).json({ error: 'invalid request: no data in POST body'});
+      res.status(200).json('invalid request: no data in POST body');
       return;
     }
 
     if(!req.session.user_id){
-      res.status(400).json({ error: 'invalid request: not logged in'});
+      res.status(200).json('invalid request: not logged in');
       return;
     }
-
-
 
     const user = req.body.user ? req.body.user : userHelper.generateRandomUser(req.session.user_id);
     const tweetID = generateRandomID();
@@ -72,29 +70,24 @@ module.exports = function(DataHelpers) {
   tweetsRoutes.post("/likes", function(req, res) {
 
     if(!req.session.user_id){
-      res.status(400).json('Sorry, you need to Login to like !');
+      res.status(200).json('Sorry, you need to Login to like !');
       return;
     }
 
     DataHelpers.putLike(req.body.data, req.session.user_id, (err, msg) => {
       if (err) {
-        if (msg) {
-          res.status(404).json(msg);
-        }
-        else {
           res.status(500).json({ error: err.message });
-        }
-
       }
       else {
-        res.status(201).send();
+        if (msg) {
+          res.status(200).json(msg);
+        }
+        else {
+          res.status(201).send();
+        }
       }
     });
   });
 
-
-
-
   return tweetsRoutes;
-
 }

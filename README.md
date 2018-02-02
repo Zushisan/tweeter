@@ -38,4 +38,4 @@ You will have to Register any account before using Tweeter.
 
 Expanding and Shrinking the window while registering / logging in / logging out will sometimes cause the Buttons to break their positions.
 
-Using the login and register button the first time the page is loaded can lead to a one time visual 'glitch' (both windows at the same time) if the user open both at once.
+Using the login and register button the first time the page is loaded can lead to a one time visual 'glitch' (both windows at the same time) if the user opens both at once.
