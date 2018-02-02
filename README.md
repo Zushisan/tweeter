@@ -18,15 +18,15 @@ Tweeter is built with HTML, CSS, JS, jQuery and AJAX for the front-end. Node, Ex
 - md5
 - MongoDB
 - cookie-session
+- Bcrypt
 
 ## Guidelines and Info
 
 The current version support persistent Tweet via the MongoDB database. User will have to Register and/or Login to Tweet.
 
-The current version does not support persistent User as they are stored in memory.
+The current version does support persistent User via the MongoDB database.
 
-You can Register as any user or use email: "User" password: "pass" as a testing user.
-
+You will have to Register any account before using Tweeter.
 
 ## Screenshots
 

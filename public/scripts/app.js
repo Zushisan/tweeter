@@ -170,9 +170,8 @@ $( document ).ready(function() {
   // nav bar compose button toggle effect
   $("#nav-bar .compose").on('click', function(){
     $(".new-tweet").slideToggle();
-    if ($(".new-tweet").is(':visible'))
-    {
-        $("textarea").focus();
+    if ($(".new-tweet").is(':visible')){
+      $("textarea").focus();
     }
   });
 
@@ -182,7 +181,6 @@ $( document ).ready(function() {
 
     let currentSection = $(this).parent().parent().parent();
     let dataValue = ($(this).attr("data-tweet-uid"));
-    let thisForm = $(this);
 
     $.ajax({
       url: '/tweets/likes',
@@ -190,7 +188,6 @@ $( document ).ready(function() {
       data: {data: dataValue},
       error: function(res) {
         $(".flash").remove();
-
         currentSection.prepend('<p class="flash">' + res.responseText + '</p>');
       },
       success: function () {
@@ -305,7 +302,7 @@ checkCookies();
 
 
 // TODO:
-  // encrypt passwords
+
   // fix some css
   // fix register/login toggle mix
   // responsive css
