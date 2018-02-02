@@ -41,7 +41,7 @@ module.exports = function makeDataHelpers(db) {
           // We run our checks here:
             // Cannot like own tweets
             // Liking a tweet multiple times add/remove name from the like array
-            console.log(tweets[0].user.name, " ", currentUser)
+
           if(tweets[0].user.name === currentUser){
             callback(true, "You cannot like your own tweets !!");
           }
@@ -57,7 +57,7 @@ module.exports = function makeDataHelpers(db) {
             });
 
             if(likingUser){
-              console.log(likeArray);
+
               likeArray = likeArray.filter(user => user !== currentUser);
             }
             else{
@@ -79,15 +79,12 @@ module.exports = function makeDataHelpers(db) {
                     }
                 }
               }
-            );
+            ); // end db update
             callback();
           }
-         });
+         }); // end db find()
 
-       // return;
-    }
-
-
+    } // putlike function
 
   } // return
 } // export

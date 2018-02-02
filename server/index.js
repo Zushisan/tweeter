@@ -52,7 +52,7 @@ app.use(cookieSession({
 
   // Fake user DB.
   const usersDB = [
-    {email: "romain", password: "12"}
+    {email: "User", password: "pass"}
   ];
 
 
@@ -70,7 +70,6 @@ app.post('/register', (req, res) => {
       res.status(201).json(userID);
     }
 
-    console.log("req body", req.body.email);
     req.session.user_id = req.body.email;
     registerUser(req.body);
 
@@ -107,7 +106,6 @@ app.post('/login', (req, res) => {
 
 // Logout
 app.post("/logout", (req, res) => {
-  console.log("logout post")
   req.session = null;
   res.status(201).json("success");
 });

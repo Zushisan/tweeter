@@ -26,10 +26,12 @@ body {
  */
 
 .container {
-  width: 51vw;
-  margin: 9.2vw auto 0;
+  width: 450px;
+  margin: 80px auto 0;
   background-color: white;
 }
+
+
 
 
 

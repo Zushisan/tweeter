@@ -28,7 +28,7 @@ $( document ).ready(function() {
     let timeStamp = Date.now() - tweet.created_at;
 
     function convertMS(ms) {
-      var d, h, m, s;
+      let d, h, m, s;
       s = Math.floor(ms / 1000);
       m = Math.floor(s / 60);
       s = s % 60;
@@ -73,6 +73,7 @@ $( document ).ready(function() {
       method: 'GET',
       success: function ($myTweet) {
         renderTweets($myTweet);
+
       }
     });
 
@@ -161,7 +162,6 @@ $( document ).ready(function() {
 
     let currentSection = $(this).parent().parent().parent();
     let dataValue = ($(this).attr("data-tweet-uid"));
-    console.log("My Data in submit event: " + dataValue);
 
 
     $.ajax({
@@ -175,7 +175,6 @@ $( document ).ready(function() {
       },
       success: function () {
         $(".flash").remove();
-        console.log("like success");
         loadTweets();
 
       }
@@ -224,7 +223,7 @@ $( document ).ready(function() {
   // login form design
   $("#nav-bar button.login").one('click', function(){
     $('.tweet-section').slideToggle();
-    $('<form action="/login" method="POST" class="login-form"><h3>Login</h3><p>e-mail: <input name="email" class="email"></p><p>password: <input name="password" class="password"></p><input type="submit" value="Create Account" class="users"></form>').appendTo('.container');
+    $('<form action="/login" method="POST" class="login-form"><h3>Login</h3><p>e-mail: <input name="email" class="email"></p><p>password: <input name="password" class="password"></p><input type="submit" value="Login" class="users"></form>').appendTo('.container');
 
     $("#nav-bar button.login").on('click', function(){
         $('.login-form').slideToggle();

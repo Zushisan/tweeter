@@ -8,10 +8,10 @@ const tweetsRoutes  = express.Router();
 //Random Tweet ID generator
 function generateRandomID() {
   // userInfo.password = bcrypt.hashSync(userInfo.password, 10);
-  var randomID = "";
-  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let randomID = "";
+  let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-  for (var i = 0; i < 6; i++){
+  for (let i = 0; i < 6; i++){
     randomID += possible.charAt(Math.floor(Math.random() * possible.length));
   }
 
@@ -72,18 +72,14 @@ module.exports = function(DataHelpers) {
   tweetsRoutes.post("/likes", function(req, res) {
 
     if(!req.session.user_id){
-      res.status(400).json({ error: 'invalid request: You need to login to like !'});
+      res.status(400).json('Sorry, you need to Login to like !');
       return;
     }
 
     DataHelpers.putLike(req.body.data, req.session.user_id, (err, msg) => {
       if (err) {
-
-        console.log(msg);
         if (msg) {
-          console.log("cant send header ?");
           res.status(404).json(msg);
-          console.log("cant send header 22222");
         }
         else {
           res.status(500).json({ error: err.message });
@@ -91,7 +87,6 @@ module.exports = function(DataHelpers) {
 
       }
       else {
-        console.log("sending 201");
         res.status(201).send();
       }
     });
