@@ -53,16 +53,25 @@ $( document ).ready(function() {
 
 
   // Render the html tweet sent by the createTweetElement()
-  function renderTweets(tweets) {
-    // loops through tweets
-    $('#display-tweets').remove();
-    for(tweet in tweets){
-      // calls createTweetElement for each tweet
-      let fullTweet = createTweetElement(tweets[tweet]);
-
+  function renderTweets(tweets, latest) {
+    // Only load the latest tweet if load latest tweet is called
+    if(latest){
+      let fullTweet = createTweetElement(tweets[tweets.length - 1]);
       // takes return value and appends it to the tweets container
       $('.tweet-section').append('<section id="display-tweets"></section>')
       $('#display-tweets').prepend(fullTweet);
+    }
+    else{
+      // loops through tweets
+      $('#display-tweets').remove();
+      for(tweet in tweets){
+        // calls createTweetElement for each tweet
+        let fullTweet = createTweetElement(tweets[tweet]);
+
+        // takes return value and appends it to the tweets container
+        $('.tweet-section').append('<section id="display-tweets"></section>')
+        $('#display-tweets').prepend(fullTweet);
+      }
     }
   }
 
@@ -72,11 +81,22 @@ $( document ).ready(function() {
       url: '/tweets',
       method: 'GET',
       success: function ($myTweet) {
-        renderTweets($myTweet);
+        renderTweets($myTweet, null);
 
       }
     });
+  }
 
+    // Get the tweets from the DB and render them
+  function loadLatestTweets($myTweet){
+    $.ajax({
+      url: '/tweets',
+      method: 'GET',
+      success: function ($myTweet) {
+        renderTweets($myTweet, "latest");
+
+      }
+    });
   }
 
 
@@ -138,7 +158,7 @@ $( document ).ready(function() {
       $('.new-tweet').append("<p class='flash'> Alert, you must be logged in to tweet !!!</p>");
       },
       success: function () {
-        loadTweets();
+        loadLatestTweets();
         $('textarea').val('');
         // $('.counter').val('140');
       }
