@@ -235,7 +235,7 @@ $( document ).ready(function() {
       success: function (res) {
         $(".flash").remove();
         if(res.email === undefined){
-          $(".container").append('<p class="flash">' + espace(res) + '</p>');
+          $(".container").append('<p class="flash">' + escape(res) + '</p>');
         }
         else {
           $(".user-logged").remove();
