@@ -75,7 +75,7 @@ $( document ).ready(function() {
     }
   }
 
-  // Get the tweets from the DB and render them
+  // Get the tweets from the DB
   function loadTweets($myTweet){
     $.ajax({
       url: '/tweets',
@@ -87,7 +87,7 @@ $( document ).ready(function() {
     });
   }
 
-    // Get the tweets from the DB and render them
+    // Get the last tweet from the DB
   function loadLatestTweets($myTweet){
     $.ajax({
       url: '/tweets',
@@ -205,7 +205,8 @@ $( document ).ready(function() {
     $('<form action="/register" method="POST" class="register-form"><h3>Register</h3><p>e-mail: <input name="email" class="email"></p><p>password: <input name="password" class="password"></p><input type="submit" value="Create Account" class="users"></form>').appendTo('.container');
 
     $("#nav-bar button.register").on('click', function(){
-        $('.register-form').slideToggle();
+        $('.login-form').slideUp();
+        $('.register-form').slideDown();
         $('.tweet-section').slideToggle();
     });
   });
@@ -241,7 +242,8 @@ $( document ).ready(function() {
     $('<form action="/login" method="POST" class="login-form"><h3>Login</h3><p>e-mail: <input name="email" class="email"></p><p>password: <input name="password" class="password"></p><input type="submit" value="Login" class="users"></form>').appendTo('.container');
 
     $("#nav-bar button.login").on('click', function(){
-        $('.login-form').slideToggle();
+        $('.login-form').slideDown();
+        $('.register-form').slideUp();
         $('.tweet-section').slideToggle();
     });
 
@@ -299,10 +301,3 @@ checkCookies();
 
 }); // Document ready end
 
-
-
-// TODO:
-
-  // fix some css
-  // fix register/login toggle mix
-  // responsive css

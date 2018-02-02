@@ -48,4 +48,14 @@
   background-color: #eee;
   border-radius: 5px;
   font-size: 150%;
+  padding: 5px;
+}
+
+@media (max-width: 500px){
+
+  .user-logged {
+    font-size: 100%;
+    margin: auto;
+    width: 50%;
+  }
 }

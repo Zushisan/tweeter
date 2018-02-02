@@ -107,7 +107,28 @@
 .flash {
   color: red; }
 
-.superRed {
-  color: red;
-}
 /*# sourceMappingURL=stretch.css.map */
+
+@media (max-width: 500px){
+
+  #display-tweets {
+    margin: 0px 2em 0px; }
+  #display-tweets #tweet-container {
+    margin: auto;
+    width:90%; }
+
+  .new-tweet {
+    margin: auto;
+    width:80%; }
+
+  .new-tweet textarea {
+    width: 320px;
+    height: 60px;
+    padding: 5px; }
+
+  .container {
+    margin-right: 0;
+    margin-left: 0;
+  }
+
+}

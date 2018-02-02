@@ -49,26 +49,31 @@ MongoClient.connect(MONGODB_URI, (err, db) => {
 
   // Registration Form
   app.post('/register', (req, res) => {
-    req.body.password = bcrypt.hashSync(req.body.password, 10);
-    DataHelpers.registerUser(req.body, (err, msg, user) => {
-      if (err) {
-        if (msg) {
-          res.status(404).json(msg);
+
+    if(req.body.email === "" || req.body.password === ""){
+      res.status(400).json("Field cannot be blanks.")
+    }
+    else {
+      req.body.password = bcrypt.hashSync(req.body.password, 10);
+      DataHelpers.registerUser(req.body, (err, msg, user) => {
+        if (err) {
+          if (msg) {
+            res.status(404).json(msg);
+          }
+          else {
+            res.status(500).json({ error: err.message });
+          }
         }
         else {
-          res.status(500).json({ error: err.message });
+          req.session.user_id = user.email;
+          res.status(201).json(user.email);
         }
-      }
-      else {
-        req.session.user_id = user.email;
-        res.status(201).json(user.email);
-      }
-    });
+      });
+    }
   });
 
     // Login form
   app.post('/login', (req, res) => {
-    // req.body.password = bcrypt.hashSync(req.body.password, 10);
     DataHelpers.userLogin(req.body, bcrypt, (err, msg, user) => {
       if (err) {
         if (msg) {
