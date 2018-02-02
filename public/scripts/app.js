@@ -175,6 +175,7 @@ $( document ).ready(function() {
       },
       success: function () {
         $(".flash").remove();
+
         loadTweets();
 
       }
