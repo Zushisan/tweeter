@@ -235,7 +235,7 @@ $( document ).ready(function() {
       success: function (res) {
         $(".flash").remove();
         if(res.email === undefined){
-          $(".container").append('<p class="flash">' + res + '</p>');
+          $(".container").append('<p class="flash">' + espace(res) + '</p>');
         }
         else {
           $(".user-logged").remove();
@@ -243,7 +243,7 @@ $( document ).ready(function() {
           $(".logout").show();
           $('.register-form').slideToggle();
           $('.tweet-section').slideToggle();
-          $(".tweet-section").prepend('<p class="user-logged"> Logged in as ' + res.email + '. </p>');
+          $(".tweet-section").prepend('<p class="user-logged"> Logged in as ' + escape(res.email) + '. </p>');
         }
       }
     });
@@ -287,7 +287,7 @@ $( document ).ready(function() {
           $(".login").hide();
           $('.login-form').slideToggle();
           $('.tweet-section').slideToggle();
-          $(".tweet-section").prepend('<p class="user-logged"> Logged in as ' + res.email + '. </p>');
+          $(".tweet-section").prepend('<p class="user-logged"> Logged in as ' + escape(res.email) + '. </p>');
         }
       }
     });
