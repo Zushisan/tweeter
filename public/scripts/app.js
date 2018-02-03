@@ -41,8 +41,11 @@ $( document ).ready(function() {
 
     timeStamp = convertMS(timeStamp);
 
-
-    timeStamp = `${timeStamp.d} days ${timeStamp.h} hours ${timeStamp.m} min ${timeStamp.s} sec ago.`
+    if(timeStamp.d >= 0 && timeStamp.h >= 0 && timeStamp.m >= 0 && timeStamp.s >= 0){
+      timeStamp = `${timeStamp.d} days ${timeStamp.h} hours ${timeStamp.m} min ${timeStamp.s} sec ago.`;
+    } else {
+      timeStamp = `0 days 0 hours 0 min 1 sec ago.`;
+    }
 
     // Futur render
     let $tweet = $('<div id="tweet-container"><div class="header"><header><img alt="vanil12" src="' + avatarUrl + '"><span class="full-name"> ' + fullName + ' </span><span class="at-name"> ' + atName + ' </span></header></div><article><p> ' + escape(tweetContent) + ' </p></article><footer><span> ' + timeStamp + ' </span><div class="icons"><i class="fa fa-flag mini-icons" aria-hidden="true"></i><i class="fa fa-retweet mini-icons" aria-hidden="true"></i><form class="likes-form" action="/tweets/likes" method="POST" data-tweet-uid="' + tweetID + '"><button type="submit"><i class="fa fa-heart mini-icons"></i></button></form><span>' + likeArray.length + '</span></div></footer></div>');
